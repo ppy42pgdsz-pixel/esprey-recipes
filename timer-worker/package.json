@@ -1,0 +1,12 @@
+{
+  "name": "esprey-recipes-timers",
+  "private": true,
+  "version": "0.1.0",
+  "scripts": {
+    "check": "tsc --noEmit"
+  },
+  "devDependencies": {
+    "@cloudflare/workers-types": "^4.20250101.0",
+    "typescript": "^5.5.4"
+  }
+}

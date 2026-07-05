@@ -1,0 +1,25 @@
+# Timer push worker — checks for finished timers every minute and sends
+# push notifications so a locked iPhone still buzzes.
+#
+# Secrets to add in the Cloudflare dashboard for THIS worker
+# (Settings → Variables and Secrets → Add → type Secret):
+#   VAPID_PRIVATE_KEY  (Claude gave this to Carl in chat — never commit it)
+#
+# After creating the D1 database, paste its ID into database_id below
+# (or ask Claude to do it).
+
+name = "esprey-recipes-timers"
+main = "src/index.ts"
+compatibility_date = "2025-06-01"
+
+[triggers]
+crons = ["* * * * *"]
+
+[[d1_databases]]
+binding = "DB"
+database_name = "esprey-recipes"
+database_id = "b7e6c070-78a0-47f3-a055-4a43afbe0b79"
+
+[vars]
+VAPID_SUBJECT = "mailto:cesprey@gmail.com"
+VAPID_PUBLIC_KEY = "BBDttz9srTWK1YgbGasvFDxkHRj-e2L07CL7pJYbE7wxwe1Vjya85ulCmGRf4N0kKVdD00acl8ZIhRVMpTXdjx8"
