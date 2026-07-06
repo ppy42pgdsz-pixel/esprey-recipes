@@ -19,6 +19,31 @@ export default function RecipeDetail() {
       .catch((e) => setError(e.message))
   }, [id])
 
+  // Keep the screen awake while a recipe is open — kitchen hands are messy hands.
+  useEffect(() => {
+    let lock: { release: () => Promise<void> } | null = null
+    const request = async () => {
+      try {
+        lock = await (
+          navigator as Navigator & {
+            wakeLock?: { request: (t: string) => Promise<{ release: () => Promise<void> }> }
+          }
+        ).wakeLock?.request('screen') ?? null
+      } catch {
+        /* not supported or denied — no harm done */
+      }
+    }
+    request()
+    const onVisible = () => {
+      if (document.visibilityState === 'visible') request()
+    }
+    document.addEventListener('visibilitychange', onVisible)
+    return () => {
+      document.removeEventListener('visibilitychange', onVisible)
+      lock?.release().catch(() => {})
+    }
+  }, [])
+
   if (error) return <p className="error">{error}</p>
   if (!recipe) return <p className="loading">Loading…</p>
 
@@ -126,9 +151,14 @@ export default function RecipeDetail() {
         ))}
       </ol>
 
-      <button className="ghost" onClick={remove}>
-        Delete this recipe
-      </button>
+      <div className="row" style={{ marginTop: 10 }}>
+        <button className="secondary" onClick={() => navigate(`/recipe/${recipe.id}/edit`)}>
+          ✏️ Edit recipe
+        </button>
+        <button className="ghost" onClick={remove}>
+          Delete
+        </button>
+      </div>
     </div>
   )
 }

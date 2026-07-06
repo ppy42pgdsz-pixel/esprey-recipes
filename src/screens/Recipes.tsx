@@ -23,11 +23,15 @@ export default function Recipes() {
     }).catch(() => {})
   }
 
-  const visible = (recipes ?? []).filter(
-    (r) =>
-      (!favesOnly || r.is_favourite === 1) &&
-      r.title.toLowerCase().includes(search.toLowerCase())
-  )
+  const q = search.toLowerCase()
+  const visible = (recipes ?? [])
+    .filter(
+      (r) =>
+        (!favesOnly || r.is_favourite === 1) &&
+        (r.title.toLowerCase().includes(q) ||
+          r.ingredients.some((i) => i.item.toLowerCase().includes(q)))
+    )
+    .sort((a, b) => b.is_favourite - a.is_favourite)
 
   return (
     <div>
