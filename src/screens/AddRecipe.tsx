@@ -1,21 +1,10 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { api } from '../lib/api'
+import { fileToResizedBase64 } from '../lib/image'
 import type { Recipe, RecipeDraft } from '../lib/types'
 
 type Mode = 'url' | 'photo' | 'invent'
-
-/** Shrink the photo before upload so it stays well under API limits. */
-async function fileToResizedBase64(file: File): Promise<{ data: string; media_type: string }> {
-  const bitmap = await createImageBitmap(file)
-  const scale = Math.min(1, 1600 / Math.max(bitmap.width, bitmap.height))
-  const canvas = document.createElement('canvas')
-  canvas.width = Math.round(bitmap.width * scale)
-  canvas.height = Math.round(bitmap.height * scale)
-  canvas.getContext('2d')!.drawImage(bitmap, 0, 0, canvas.width, canvas.height)
-  const dataUrl = canvas.toDataURL('image/jpeg', 0.85)
-  return { data: dataUrl.split(',')[1], media_type: 'image/jpeg' }
-}
 
 export default function AddRecipe() {
   const navigate = useNavigate()

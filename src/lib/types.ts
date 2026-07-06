@@ -42,6 +42,14 @@ export interface ShoppingItem {
   checked: 0 | 1
 }
 
+export interface PantryItem {
+  id: number
+  name: string
+  category: string
+  source: 'photo' | 'manual'
+  last_seen_at: string
+}
+
 export interface Suggestion {
   recipe_id: number
   title: string

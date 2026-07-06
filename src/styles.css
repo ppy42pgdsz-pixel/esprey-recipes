@@ -171,6 +171,54 @@ input:focus, textarea:focus { outline: 2px solid var(--accent); border-color: tr
 .shopping-item .from { font-size: 0.75rem; color: var(--text-soft); display: block; }
 .shopping-item.checked .label { text-decoration: line-through; color: var(--text-soft); }
 
+/* ---------- pantry ---------- */
+
+.pantry-grid { display: flex; flex-wrap: wrap; gap: 8px; }
+
+.pantry-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  padding: 7px 6px 7px 14px;
+  font-size: 0.9rem;
+}
+.pantry-chip .chip-x {
+  background: var(--accent-soft);
+  color: var(--accent-dark);
+  border-radius: 999px;
+  padding: 2px 8px;
+  font-size: 0.75rem;
+}
+
+.proposed-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 2px;
+  border-bottom: 1px solid var(--border);
+}
+.proposed-item:last-child { border-bottom: none; }
+.proposed-item input[type='checkbox'] { width: auto; transform: scale(1.25); }
+.cat-tag {
+  margin-left: 8px;
+  font-size: 0.72rem;
+  color: var(--text-soft);
+  background: var(--bg);
+  border-radius: 999px;
+  padding: 2px 8px;
+}
+
+.pantry-toggle {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 10px 0 14px;
+}
+.pantry-toggle input[type='checkbox'] { width: auto; transform: scale(1.25); }
+
 /* ---------- timer bar ---------- */
 
 .timer-bar {

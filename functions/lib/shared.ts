@@ -150,6 +150,22 @@ export function normalizeRecipe(
   }
 }
 
+/* ---------- pantry ---------- */
+
+export const PANTRY_CATEGORIES = [
+  'veg & fruit',
+  'meat & fish',
+  'dairy & eggs',
+  'store cupboard',
+  'spices & sauces',
+  'frozen',
+  'other',
+]
+
+export function cleanPantryName(raw: string): string {
+  return raw.trim().toLowerCase().replace(/\s+/g, ' ').slice(0, 80)
+}
+
 /* ---------- database rows ---------- */
 
 export function rowToRecipe(row: Record<string, unknown>) {

@@ -8,6 +8,7 @@ import RecipeDetail from './screens/RecipeDetail'
 import AddRecipe from './screens/AddRecipe'
 import Suggest from './screens/Suggest'
 import Shopping from './screens/Shopping'
+import Pantry from './screens/Pantry'
 
 function PushBanner() {
   const [permission, setPermission] = useState<NotificationPermission>(() =>
@@ -45,6 +46,7 @@ export default function App() {
             <Route path="/recipe/:id" element={<RecipeDetail />} />
             <Route path="/add" element={<AddRecipe />} />
             <Route path="/cook" element={<Suggest />} />
+            <Route path="/pantry" element={<Pantry />} />
             <Route path="/shopping" element={<Shopping />} />
           </Routes>
         </main>
@@ -56,6 +58,9 @@ export default function App() {
           </NavLink>
           <NavLink to="/cook" className={({ isActive }) => (isActive ? 'active' : '')}>
             <span className="icon">🍳</span>Cook
+          </NavLink>
+          <NavLink to="/pantry" className={({ isActive }) => (isActive ? 'active' : '')}>
+            <span className="icon">🥕</span>Pantry
           </NavLink>
           <NavLink to="/shopping" className={({ isActive }) => (isActive ? 'active' : '')}>
             <span className="icon">🛒</span>List

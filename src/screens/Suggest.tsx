@@ -1,15 +1,29 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { api } from '../lib/api'
-import type { Suggestion } from '../lib/types'
+import type { PantryItem, Suggestion } from '../lib/types'
 
 export default function Suggest() {
-  const [onHand, setOnHand] = useState('')
+  const [pantry, setPantry] = useState<PantryItem[]>([])
+  const [usePantry, setUsePantry] = useState(true)
+  const [extras, setExtras] = useState('')
   const [suggestions, setSuggestions] = useState<Suggestion[] | null>(null)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
 
+  useEffect(() => {
+    api<PantryItem[]>('/api/pantry').then(setPantry).catch(() => setPantry([]))
+  }, [])
+
+  const havePantry = pantry.length > 0
+
   async function suggest() {
+    const parts = []
+    if (havePantry && usePantry) parts.push(pantry.map((p) => p.name).join(', '))
+    if (extras.trim()) parts.push(extras.trim())
+    const onHand = parts.join(', ')
+    if (!onHand) return
+
     setLoading(true)
     setError('')
     setSuggestions(null)
@@ -29,16 +43,39 @@ export default function Suggest() {
   return (
     <div>
       <h1>What can we cook?</h1>
-      <p>
-        Tell Claude roughly what's in the kitchen — it'll pick the best matches from your recipes.
-      </p>
+
+      {havePantry ? (
+        <label className="pantry-toggle">
+          <input
+            type="checkbox"
+            checked={usePantry}
+            onChange={() => setUsePantry(!usePantry)}
+          />
+          <span>
+            Use my pantry list ({pantry.length} items) — <Link to="/pantry">view</Link>
+          </span>
+        </label>
+      ) : (
+        <p>
+          Tell Claude roughly what's in the kitchen — or save time by scanning the fridge on the{' '}
+          <Link to="/pantry">Pantry</Link> tab first.
+        </p>
+      )}
+
       <textarea
-        placeholder="e.g. chicken thighs, half a cabbage, rice, eggs, parmesan, tinned tomatoes…"
-        value={onHand}
-        onChange={(e) => setOnHand(e.target.value)}
+        placeholder={
+          havePantry
+            ? 'Anything extra not in the pantry list? (optional)'
+            : 'e.g. chicken thighs, half a cabbage, rice, eggs, parmesan…'
+        }
+        value={extras}
+        onChange={(e) => setExtras(e.target.value)}
       />
       <div style={{ marginTop: 10 }}>
-        <button onClick={suggest} disabled={!onHand.trim() || loading}>
+        <button
+          onClick={suggest}
+          disabled={loading || (!(havePantry && usePantry) && !extras.trim())}
+        >
           {loading ? 'Thinking…' : 'Suggest recipes'}
         </button>
       </div>
@@ -47,8 +84,8 @@ export default function Suggest() {
 
       {suggestions !== null && suggestions.length === 0 && (
         <p className="empty">
-          No good matches in your collection yet. Try adding more recipes — or use ✨ Invent on the
-          Add screen with these ingredients.
+          No good matches in your collection yet. Try adding more recipes — or use ✨ Invent on
+          the Add screen with these ingredients.
         </p>
       )}
 
