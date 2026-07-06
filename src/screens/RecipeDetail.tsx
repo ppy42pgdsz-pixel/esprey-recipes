@@ -34,11 +34,15 @@ export default function RecipeDetail() {
 
   async function addToShopping() {
     if (!recipe) return
-    const res = await api<{ added: number }>('/api/shopping/from-recipe', {
+    const res = await api<{ added: number; skipped: number }>('/api/shopping/from-recipe', {
       method: 'POST',
       body: JSON.stringify({ recipe_id: recipe.id }),
     })
-    setNotice(`${res.added} ingredients added to the shopping list. Untick what you already have there.`)
+    setNotice(
+      res.skipped > 0
+        ? `${res.added} ingredients added — skipped ${res.skipped} already in your pantry.`
+        : `${res.added} ingredients added to the shopping list.`
+    )
   }
 
   async function remove() {

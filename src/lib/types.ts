@@ -50,6 +50,12 @@ export interface PantryItem {
   last_seen_at: string
 }
 
+export interface EquipmentItem {
+  id: number
+  name: string
+  source: 'photo' | 'manual'
+}
+
 export interface Suggestion {
   recipe_id: number
   title: string

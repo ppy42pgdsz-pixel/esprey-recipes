@@ -24,12 +24,23 @@ export const onRequestPost: PagesFunction<Env> = async ({ request, env }) => {
     }
   })
 
+  const equipment = (
+    (await env.DB.prepare('SELECT name FROM equipment_items').all()).results as Array<{
+      name: string
+    }>
+  ).map((r) => r.name)
+
   const reply = await askClaude(env, {
     model: MODELS.planner,
     system: `You help a family decide what to cook tonight. Given their recipe collection and what they say they have on hand, pick up to 5 recipes, ranked best-first. Assume staples like salt, pepper, oil, butter, flour, sugar and water are always available. Only suggest recipes that are realistic with what they have — an empty list is a fine answer.
+If an "equipment" list is provided, assume basics (oven, hob, saucepans, knives) always exist; the list covers notable extras. Avoid recipes that clearly depend on equipment they lack, or mention the workaround in the reason.
 Respond with ONLY this JSON:
 {"suggestions": [{"recipe_id": number, "reason": string (one friendly sentence on why it fits), "missing": [string] (significant ingredients they would need to buy, empty if none)}]}`,
-    content: JSON.stringify({ recipes: catalogue, on_hand: on_hand.slice(0, 3000) }),
+    content: JSON.stringify({
+      recipes: catalogue,
+      on_hand: on_hand.slice(0, 3000),
+      equipment,
+    }),
   })
 
   const parsed = extractJson<{ suggestions?: RawSuggestion[] }>(reply)

@@ -10,6 +10,15 @@ export default function Suggest() {
   const [suggestions, setSuggestions] = useState<Suggestion[] | null>(null)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
+  const [addedIds, setAddedIds] = useState<Set<number>>(new Set())
+
+  async function addMissing(s: Suggestion) {
+    await api('/api/shopping/bulk', {
+      method: 'POST',
+      body: JSON.stringify({ items: s.missing, recipe_title: s.title }),
+    })
+    setAddedIds((prev) => new Set(prev).add(s.recipe_id))
+  }
 
   useEffect(() => {
     api<PantryItem[]>('/api/pantry').then(setPantry).catch(() => setPantry([]))
@@ -96,7 +105,18 @@ export default function Suggest() {
           </Link>
           <p className="reason">{s.reason}</p>
           {s.missing.length > 0 && (
-            <p className="missing">You'd need to buy: {s.missing.join(', ')}</p>
+            <>
+              <p className="missing">You'd need to buy: {s.missing.join(', ')}</p>
+              {addedIds.has(s.recipe_id) ? (
+                <p className="notice" style={{ margin: '6px 0 0' }}>
+                  Added to your shopping list ✓
+                </p>
+              ) : (
+                <button className="small secondary" onClick={() => addMissing(s)}>
+                  🛒 Add missing to list
+                </button>
+              )}
+            </>
           )}
         </div>
       ))}
